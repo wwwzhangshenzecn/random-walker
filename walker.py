@@ -24,8 +24,6 @@
 '''
 
 import networkx as nx
-import numpy as np
-
 
 class Walker:
 
@@ -37,7 +35,10 @@ class Walker:
         '''
         self.graph = graph
         self.startNodeList = startNodeList
-        self.sample_graph = nx.DiGraph()  # 根据初始节点游走后，最后的结果
+        if graph.is_directed():
+            self.sample_graph = nx.DiGraph()  # 根据初始节点游走后，最后的结果
+        else:
+            self.sample_graph = nx.Graph()
 
     def Random_Walker(self, deep=5, size = 1):
         '''
@@ -68,6 +69,8 @@ class Walker:
         probs = [probs[i] / sumPorb for i in range(len(probs))]
         nextNode = np.random.choice(keys,size=size, p=probs)
         for n in set(nextNode):
+            if nodes == 1 and n == 0:
+                print(1)
             self.sample_graph.add_edge(node, n)
             self.__walker(n, node, deep-1, size)
 
@@ -81,6 +84,8 @@ if __name__=='__main__':
     g = nx.petersen_graph()
     nx.draw(g, with_labels=True)
     plt.show()
+    print(len(g.edges))
+    print(g.edges)
 
     edges = g.edges
     for (k, v) in edges:
@@ -88,11 +93,13 @@ if __name__=='__main__':
         g.edges[(k, v)]['weight'] = prob
     nodes = [2, 5, 8]
 
-    print(g.adj[0])
+    print(g.adj[8])
 
     rw = Walker(g, nodes)
-    rw.Random_Walker(size=2, deep=2)
+    rw.Random_Walker(size=4, deep=2)
     sample = rw.sample_graph
 
     nx.draw(sample, with_labels=True)
-    plt.show()
+    # plt.show()
+    print(len(sample.edges))
+    print(sample.edges)
